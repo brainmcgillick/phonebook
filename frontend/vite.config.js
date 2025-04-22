@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3001",
+        target: "https://phonebook-gwq4.onrender.com",
         changeOrigin: true
       }
     }
