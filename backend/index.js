@@ -50,9 +50,11 @@ app.post("/api/persons", (req, res, next) => {
         number: body.number
     })
 
-    person.save().then(savedPerson => {
-        res.json(savedPerson)
-    })
+    person.save()
+        .then(savedPerson => {
+            res.json(savedPerson)
+        })
+        .catch(error => next(error))
 })
 
 app.put("/api/persons/:id", (req, res, next) => {
@@ -65,9 +67,11 @@ app.put("/api/persons/:id", (req, res, next) => {
 
             person.number = updatedPerson.number
 
-            person.save().then(savedPerson => {
-                return res.json(savedPerson)
-            })
+            person.save()
+                .then(savedPerson => {
+                    return res.json(savedPerson)
+                })
+                .catch(error => next(error))
         })
         .catch(error => next(error))
 })
@@ -94,6 +98,8 @@ const errorHandler = (error, req, res, next) => {
         return res.status(400).send({ error: "malformed id"})
     } else if (error.name === "MissingData") {
         return res.status(400).send(error)
+    } else if (error.name === "ValidationError") {
+        return res.status(400).json(error)
     }
 }
 

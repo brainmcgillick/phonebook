@@ -43,11 +43,18 @@ const PersonForm = ({ persons, setPersons, setMessage, setMessageType }) => {
               })
               .catch(error => {
                 setMessageType("failure")
-                setMessage(`Information for ${newPerson.name} has already been removed from the server.`)
-                setTimeout(() => {
-                  setMessage(null)
-                }, 5000)
-                setPersons(persons.filter(person => person.name !== newPerson.name))
+                if (error.response.data.name === "ValidationError") {
+                  setMessage(error.response.data.message)
+                  setTimeout(() => {
+                    setMessage(null)
+                  }, 5000)
+                } else {
+                  setMessage(`Information for ${newPerson.name} has already been removed from the server.`)
+                  setTimeout(() => {
+                    setMessage(null)
+                  }, 5000)
+                  setPersons(persons.filter(person => person.name !== newPerson.name))
+                }
               })
           }
         }
@@ -62,6 +69,13 @@ const PersonForm = ({ persons, setPersons, setMessage, setMessageType }) => {
               setMessage(null)
             }, 5000)
             setPersons(persons.concat(createdPerson))
+          })
+          .catch(error => {
+            setMessageType("Failure")
+            setMessage(error.response.data.message)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
           })
       }
       setNewName("")
